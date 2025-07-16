@@ -682,15 +682,33 @@ export class AtomicSwapsTool {
         // Pay the invoice using NWC client (same pattern as working pay_invoice tool)
         let processedResult: any;
         try {
+          // Get the amount from the swap object - handle BigInt safely
+          const amountSatsBigInt = swap.getInputWithoutFee();
+          const amountSats = parseInt(amountSatsBigInt.toString());
+          const amountMillisats = amountSats * 1000;
+          
+          console.log("Payment details:", {
+            invoice: lightningInvoice,
+            amount_sats: amountSats,
+            amount_millisats: amountMillisats
+          });
+
           const { fees_paid, preimage, ...paymentResult } =
             await this.nwcClient.payInvoice({
               invoice: lightningInvoice,
+              amount: amountMillisats, // Amount in millisats like the working tool
+              metadata: {
+                swap_id: swapId,
+                direction: "lightning_to_starknet",
+                service: "atomiqlabs"
+              }
             });
 
-          console.log(
-            "Lightning invoice payment result:",
-            JSON.stringify({ fees_paid, preimage, ...paymentResult }, null, 2)
-          );
+          console.log("Lightning invoice payment result:", {
+            fees_paid,
+            preimage,
+            ...paymentResult,
+          });
 
           // Create result object similar to working pay_invoice tool
           processedResult = {
