@@ -16,7 +16,8 @@
     "build": "tsc && chmod 755 build/index.js",
     "start": "node build/index.js",
     "start:http": "MODE=HTTP node build/index.js",
-    "inspect": "npx @modelcontextprotocol/inspector node build/index.js"
+    "inspect": "npx @modelcontextprotocol/inspector node build/index.js",
+    "test-swap": "yarn build && node test_atomic_swap.js"
   },
   "keywords": [
     "lightning",
