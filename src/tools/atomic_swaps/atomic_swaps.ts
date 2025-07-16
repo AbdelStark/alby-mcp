@@ -654,20 +654,6 @@ export class AtomicSwapsTool {
     if (!swap) {
       throw new Error(`Swap with ID ${swapId} not found`);
     }
-    console.log("Swap:", swap);
-    console.log("Swap object keys:", Object.keys(swap));
-    try {
-      console.log("Swap initialSwapData:", swap.initialSwapData);
-      console.log("Swap getSwapData():", swap.getSwapData());
-      if (swap.getSwapData() && swap.getSwapData().getOfferer) {
-        console.log(
-          "Swap Offerer from getSwapData():",
-          swap.getSwapData().getOfferer()
-        );
-      }
-    } catch (e) {
-      console.log("Error getting swap data:", e);
-    }
 
     console.log("Executing Lightning to Starknet swap...");
 
@@ -686,11 +672,11 @@ export class AtomicSwapsTool {
           const amountSatsBigInt = swap.getInputWithoutFee();
           const amountSats = parseInt(amountSatsBigInt.toString());
           const amountMillisats = amountSats * 1000;
-          
+
           console.log("Payment details:", {
             invoice: lightningInvoice,
             amount_sats: amountSats,
-            amount_millisats: amountMillisats
+            amount_millisats: amountMillisats,
           });
 
           const { fees_paid, preimage, ...paymentResult } =
@@ -700,8 +686,8 @@ export class AtomicSwapsTool {
               metadata: {
                 swap_id: swapId,
                 direction: "lightning_to_starknet",
-                service: "atomiqlabs"
-              }
+                service: "atomiqlabs",
+              },
             });
 
           console.log("Lightning invoice payment result:", {
@@ -737,11 +723,7 @@ export class AtomicSwapsTool {
           );
         }
 
-        // Note: We don't require preimage for success since the working tool shows
-        // that some providers (like Primal) don't return it
-
-        // Use proper SDK pattern: wait for payment to be received
-        console.log("Waiting for payment to be received by AtomiqLabs...");
+        console.log("Waiting for payment to be received...");
 
         try {
           // Use the SDK's built-in waitForPayment method (with timeout)
@@ -749,12 +731,13 @@ export class AtomicSwapsTool {
           console.log("waitForPayment result:", paymentReceived);
 
           if (paymentReceived) {
-            console.log("Payment received successfully by AtomiqLabs");
+            console.log("Payment received successfully");
 
             // Now commit and claim the swap following SDK pattern
             const signer = this.swapper.getStarknetSigner();
 
             console.log("Committing swap...");
+            console.log("Signer address:", signer.getAddress());
             await swap.commit(signer);
 
             console.log("Claiming swap...");
@@ -985,6 +968,7 @@ export class AtomicSwapsTool {
     try {
       const signer = this.swapper.getStarknetSigner();
 
+      console.log("Signer address:", signer.getAddress());
       // Commit the swap on Starknet
       console.log("Committing swap on Starknet...");
       await swap.commit(signer);

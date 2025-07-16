@@ -19,10 +19,10 @@
     lodash.clonedeep "4.5.0"
     safe-buffer "^5.1.1"
 
-"@atomiqlabs/chain-starknet@^3.0.0-beta.7":
-  version "3.0.0-beta.7"
-  resolved "https://registry.yarnpkg.com/@atomiqlabs/chain-starknet/-/chain-starknet-3.0.0-beta.7.tgz#702b2689170523f8e5efd62d824bd3fe59a9413e"
-  integrity sha512-cN0tPlo5swlOTw8g7OgtzNPRqPZUf0P5AECpalB+H2zClNBVzSVaqJjqoENqG/sim32Nn7S2IVlhOWmiGZvxEg==
+"@atomiqlabs/chain-starknet@^3.0.0-beta.8":
+  version "3.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@atomiqlabs/chain-starknet/-/chain-starknet-3.0.0-beta.8.tgz#0f8c8de5edfdaa6b89816badc29ed5f537bcdf81"
+  integrity sha512-J5VGn2ZyC6PLHsCF0fkOwQhOpkhKmMPeUKS2J8gCtr1Bol+tOuzI5XOSWEDPI3ss5MvazuMER/g/cf45lUl/Rg==
   dependencies:
     "@atomiqlabs/base" "^9.1.0"
     "@noble/hashes" "^1.7.1"
