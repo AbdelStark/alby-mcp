@@ -6,6 +6,8 @@ This MCP server uses the [official MCP TypeScript SDK](https://github.com/modelc
 
 This MCP server has knowledge of [NWC](https://nwc.dev/), [LNURL](https://github.com/lnurl/luds) and [L402](https://docs.lightning.engineering/the-lightning-network/l402) using [Alby SDK](https://github.com/getAlby/js-sdk) and [Alby Lightning Tools](https://github.com/getAlby/js-lightning-tools).
 
+**NEW**: This server now supports **trustless atomic swaps** between Lightning Network and Starknet using the [AtomiqLabs SDK](https://github.com/atomiqlabs/atomiq-sdk-demo). Execute cross-chain swaps without trusted intermediaries!
+
 <a href="https://glama.ai/mcp/servers/@getAlby/mcp">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@getAlby/mcp/badge" />
 </a>
@@ -220,6 +222,22 @@ yarn build
 
 Copy `.env.example` to `.env` and update your connection string
 
+### Atomic Swaps Configuration
+
+For atomic swaps functionality, you'll also need to configure:
+
+```bash
+# Starknet Configuration (required for atomic swaps)
+STARKNET_RPC_URL=https://starknet-mainnet.public.blastapi.io/rpc/v0_7
+STARKNET_PRIVATE_KEY=your_starknet_private_key_here
+STARKNET_ACCOUNT_ADDRESS=0x1234567890abcdef1234567890abcdef12345678
+
+# Network Configuration
+BITCOIN_NETWORK=mainnet  # or testnet for testing
+```
+
+See the [atomic swaps documentation](src/tools/atomic_swaps/README.md) for complete setup instructions.
+
 ### Inspect the tools (use/test without an LLM)
 
 `yarn inspect`
@@ -227,6 +245,22 @@ Copy `.env.example` to `.env` and update your connection string
 ### Supported Tools
 
 See the [tools directory](./src/tools)
+
+#### Lightning Network Tools
+- **NWC (Nostr Wallet Connect)**: Connect and control Lightning wallets
+- **LNURL**: Support for LNURL-pay, LNURL-withdraw, and Lightning addresses
+- **L402**: HTTP 402 payment-required protocol support
+- **Invoice Management**: Create, parse, and pay Lightning invoices
+
+#### Atomic Swaps Tools
+- **starknet_lightning_atomic_swaps**: Trustless atomic swaps between Lightning and Starknet
+  - Lightning → Starknet swaps with gas drops
+  - Starknet → Lightning swaps with LNURL support
+  - Swap monitoring, refunds, and claims
+  - Balance checking and address parsing
+  - Comprehensive error handling and recovery
+
+For detailed usage examples, see the [atomic swaps documentation](src/tools/atomic_swaps/README.md).
 
 ## Troubleshooting
 

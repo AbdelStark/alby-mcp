@@ -1,0 +1,166 @@
+yarn run v1.22.22
+$ node build/index.js
+Server running in HTTP mode on port 3000
+Registering atomic swaps tool...
+AtomicSwapsTool constructor - config: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408',
+  hasPrivateKey: true,
+  bitcoinNetwork: 0
+}
+Validating config with env vars: {
+  STARKNET_RPC_URL: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  STARKNET_PRIVATE_KEY: '[REDACTED]',
+  STARKNET_ACCOUNT_ADDRESS: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Config object: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetPrivateKey: '[REDACTED]',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Atomic swaps tool registered successfully
+AtomicSwapsTool received params: {
+  "action": "swap",
+  "direction": "lightning_to_starknet",
+  "amount": "0.000342",
+  "auto_pay": true
+}
+Swapper not ready, initializing...
+Starting complete swap flow...
+StarknetLpVault: getIntermediaryBalance(): token LP balance fetched, token: 0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d address: 0x062e25f472248d8080d9ea92b8731fc7247406193748a19e722dc4e9f2045a69 amount: 1010000000000000000000
+StarknetFees: _getFeeRate(): L1 fee rate:  [ '192852475068381', '3797', '4821311877' ]
+StarknetFees: getFeeRate(): calculated fee: 192852475068381,4821311877,3797;v3
+Quote created successfully, swap ID: 90a28523f45698991ec4580dcf551cec2337822cb1b0e138b43c88257aaa2ce6bafbe92d8b9d5f4e6cc62e3144f78ba0
+Executing Lightning to Starknet swap...
+Lightning invoice generated: lnbc342u1p580d6app5jz3g2gl526vfj8kytqxu74guas3n0q3vkxcwzw958jyz27429nnqdrc2d2yz5jtfez4gtfs0qcrwcf4vg6nwdej8qmnqvfhx43ngvm9xccnsd338qux2etzxenxvdfhvc6nqe3n8q6rjv3jx4sk2ep4xasnqdp5xf3kgcecx5ckxvfjcqpexqzyksp5zua89lda38yrkcsz334rgk876refvx39kqj0kc3mpqczcn0z4cgq9qxpqysgql896kvk44fytdps66fnu93nu00ekdas6y2e0chvrtzvkqq5yxx0x4lq8wau9w7zqaemxzcq4hsyasg2lpdguhyjvhgcu4qnpp8jxxsspjggegn
+Auto-paying Lightning invoice...
+NIP-04 encryption is about to be deprecated. Please upgrade your wallet service to use NIP-44 instead.
+Lightning invoice payment result: {}
+Lightning invoice paid successfully: { preimage: '', fees_paid_in_sats: undefined }
+Waiting for swap to complete...
+Swap state check (1/60): CREATED
+Swap state check (2/60): CREATED
+Swap state check (3/60): CREATED
+Swap state check (4/60): CREATED
+Swap state check (5/60): CREATED
+Swap state check (6/60): CREATED
+Swap state check (7/60): CREATED
+Swap state check (8/60): CREATED
+Swap state check (9/60): CREATED
+Swap state check (10/60): CREATED
+Swap state check (11/60): CREATED
+Swap state check (12/60): CREATED
+Swap state check (13/60): CREATED
+Swap state check (14/60): CREATED
+Swap state check (15/60): CREATED
+Swap state check (16/60): CREATED
+Swap state check (17/60): CREATED
+Swap state check (18/60): CREATED
+Swap state check (19/60): CREATED
+Swap state check (20/60): CREATED
+Swap state check (21/60): CREATED
+Swap state check (22/60): CREATED
+Swap state check (23/60): CREATED
+Swap state check (24/60): CREATED
+Swap state check (25/60): CREATED
+Swap state check (26/60): CREATED
+Swap state check (27/60): CREATED
+Swap state check (28/60): CREATED
+Swap state check (29/60): CREATED
+Swap state check (30/60): CREATED
+Swap state check (31/60): CREATED
+Swap state check (32/60): CREATED
+Swap state check (33/60): CREATED
+Swap state check (34/60): CREATED
+Swap state check (35/60): CREATED
+Swap state check (36/60): CREATED
+Swap state check (37/60): CREATED
+Swap state check (38/60): CREATED
+Swap state check (39/60): CREATED
+Swap state check (40/60): CREATED
+Swap state check (41/60): CREATED
+Swap state check (42/60): CREATED
+Swap state check (43/60): CREATED
+Swap state check (44/60): CREATED
+Swap state check (45/60): CREATED
+Swap state check (46/60): CREATED
+Swap state check (47/60): CREATED
+Swap state check (48/60): CREATED
+Swap state check (49/60): CREATED
+Swap state check (50/60): CREATED
+Swap state check (51/60): CREATED
+Swap state check (52/60): CREATED
+Swap state check (53/60): CREATED
+Swap state check (54/60): CREATED
+Swap state check (55/60): CREATED
+Swap state check (56/60): CREATED
+Swap state check (57/60): CREATED
+Swap state check (58/60): CREATED
+Swap state check (59/60): CREATED
+Swap state check (60/60): CREATED
+Request closed
+Registering atomic swaps tool...
+AtomicSwapsTool constructor - config: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408',
+  hasPrivateKey: true,
+  bitcoinNetwork: 0
+}
+Validating config with env vars: {
+  STARKNET_RPC_URL: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  STARKNET_PRIVATE_KEY: '[REDACTED]',
+  STARKNET_ACCOUNT_ADDRESS: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Config object: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetPrivateKey: '[REDACTED]',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Atomic swaps tool registered successfully
+NIP-04 encryption is about to be deprecated. Please upgrade your wallet service to use NIP-44 instead.
+Failed to request pay_invoice $ [Error]: command failed
+    at h.onevent (file:///Users/abdel/dev/me/alby-mcp/node_modules/@getalby/sdk/dist/index.modern.js:1:20142)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'INTERNAL'
+}
+Request closed
+Registering atomic swaps tool...
+AtomicSwapsTool constructor - config: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408',
+  hasPrivateKey: true,
+  bitcoinNetwork: 0
+}
+Validating config with env vars: {
+  STARKNET_RPC_URL: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  STARKNET_PRIVATE_KEY: '[REDACTED]',
+  STARKNET_ACCOUNT_ADDRESS: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Config object: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetPrivateKey: '[REDACTED]',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Atomic swaps tool registered successfully
+NIP-04 encryption is about to be deprecated. Please upgrade your wallet service to use NIP-44 instead.
+Request closed
+Registering atomic swaps tool...
+AtomicSwapsTool constructor - config: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408',
+  hasPrivateKey: true,
+  bitcoinNetwork: 0
+}
+Validating config with env vars: {
+  STARKNET_RPC_URL: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  STARKNET_PRIVATE_KEY: '[REDACTED]',
+  STARKNET_ACCOUNT_ADDRESS: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Config object: {
+  starknetRpcUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8',
+  starknetPrivateKey: '[REDACTED]',
+  starknetAccountAddress: '0x03641aa25b8de4a4d5ac185c72b124546666f2ad2354c9627b6565830fdea408'
+}
+Atomic swaps tool registered successfully
+NIP-04 encryption is about to be deprecated. Please upgrade your wallet service to use NIP-44 instead.
+Request closed

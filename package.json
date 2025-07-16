@@ -30,16 +30,21 @@
   "author": "Alby contributors",
   "license": "MIT",
   "dependencies": {
+    "@atomiqlabs/sdk": "^4.0.1",
+    "@atomiqlabs/chain-starknet": "^3.0.0-beta.5",
+    "@atomiqlabs/storage-sqlite": "^1.0.0",
     "@getalby/lightning-tools": "^5.2.0",
     "@getalby/sdk": "^5.1.1",
     "@modelcontextprotocol/sdk": "^1.13.0",
     "@types/node": "^20.11.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
+    "starknet": "^7.5.0",
     "typescript": "^5.3.3",
     "websocket-polyfill": "0.0.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.2"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
