@@ -21,6 +21,7 @@ export function registerGetInfoTool(server: McpServer, client: nwc.NWCClient) {
         block_hash: z.string().nullish().describe("Current block hash"),
         methods: z
           .array(z.string())
+          .nullish()
           .describe("NWC methods supported by this connection"),
         notifications: z
           .array(z.string())
@@ -31,19 +32,46 @@ export function registerGetInfoTool(server: McpServer, client: nwc.NWCClient) {
           .nullish()
           .describe("Additional metadata about this connection"),
         lud16: z.string().nullish().describe("Lightning address of the wallet"),
+        error: z.string().nullish().describe("Error message if operation failed"),
       },
     },
     async () => {
-      const info = await client.getInfo();
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(info, null, 2),
-          },
-        ],
-        structuredContent: info,
-      };
+      try {
+        const info = await client.getInfo();
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(info, null, 2),
+            },
+          ],
+          structuredContent: info,
+        };
+      } catch (error) {
+        console.error(`[MCP Tool] Error in get_info: ${(error as Error).message}`);
+        const errorResponse = {
+          alias: null,
+          color: null,
+          pubkey: null,
+          network: null,
+          block_height: null,
+          block_hash: null,
+          methods: null,
+          notifications: null,
+          metadata: null,
+          lud16: null,
+          error: (error as Error).message,
+        };
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: ${(error as Error).message}`,
+            },
+          ],
+          structuredContent: errorResponse,
+        };
+      }
     }
   );
 }

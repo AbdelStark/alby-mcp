@@ -13,7 +13,7 @@ import { registerParseInvoiceTool } from "./tools/lightning/parse_invoice.js";
 import { registerRequestInvoiceFromLightningAddressTool } from "./tools/lightning/request_invoice.js";
 import { registerAtomicSwapsTool } from "./tools/atomic_swaps/atomic_swaps.js";
 
-export function createMCPServer(client: nwc.NWCClient): McpServer {
+export function createMCPServer(client: nwc.NWCClient, nwcConnectionString?: string): McpServer {
   const server = new McpServer({
     name: "@getalby/mcp",
     version: "1.1.1",
@@ -40,8 +40,8 @@ export function createMCPServer(client: nwc.NWCClient): McpServer {
   registerParseInvoiceTool(server);
   registerRequestInvoiceFromLightningAddressTool(server);
 
-  // Atomic swaps
-  registerAtomicSwapsTool(server, client);
+  // Atomic swaps - pass connection string if available, otherwise use client
+  registerAtomicSwapsTool(server, nwcConnectionString || client);
 
   return server;
 }

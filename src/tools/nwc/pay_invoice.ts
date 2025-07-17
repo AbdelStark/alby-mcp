@@ -26,38 +26,58 @@ export function registerPayInvoiceTool(
           .nullish(),
       },
       outputSchema: {
-        preimage: z.string().describe("Payment preimage"),
+        preimage: z.string().nullish().describe("Payment preimage"),
         fees_paid_in_sats: z.number().nullish().describe("Fees paid in sats"), // TODO: remove nullish once Primal supports it
+        error: z.string().nullish().describe("Error message if operation failed"),
       },
     },
     async (params) => {
-      const { fees_paid, preimage, ...result } = await client.payInvoice({
-        invoice: params.invoice,
-        amount: params.amount_in_sats
-          ? params.amount_in_sats * 1000
-          : undefined, // Convert sats to millisats for NWC
-        metadata: params.metadata || undefined,
-      });
+      try {
+        const { fees_paid, preimage, ...result } = await client.payInvoice({
+          invoice: params.invoice,
+          amount: params.amount_in_sats
+            ? params.amount_in_sats * 1000
+            : undefined, // Convert sats to millisats for NWC
+          metadata: params.metadata || undefined,
+        });
 
-      // Convert millisats back to sats in the response
-      const convertedResult = {
-        ...result,
-        preimage: preimage || "", // TODO: once Primal supports preimage, remove this
-        fees_paid_in_sats:
-          typeof fees_paid === "number"
-            ? Math.ceil(fees_paid / 1000) // Round up fees when converting millisats to sats
-            : undefined,
-      };
+        // Convert millisats back to sats in the response
+        const convertedResult = {
+          ...result,
+          preimage: preimage || "", // TODO: once Primal supports preimage, remove this
+          fees_paid_in_sats:
+            typeof fees_paid === "number"
+              ? Math.ceil(fees_paid / 1000) // Round up fees when converting millisats to sats
+              : undefined,
+          error: null,
+        };
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(convertedResult, null, 2),
-          },
-        ],
-        structuredContent: convertedResult,
-      };
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(convertedResult, null, 2),
+            },
+          ],
+          structuredContent: convertedResult,
+        };
+      } catch (error) {
+        console.error(`[MCP Tool] Error in pay_invoice: ${(error as Error).message}`);
+        const errorResponse = {
+          preimage: null,
+          fees_paid_in_sats: null,
+          error: (error as Error).message,
+        };
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error: ${(error as Error).message}`,
+            },
+          ],
+          structuredContent: errorResponse,
+        };
+      }
     }
   );
 }

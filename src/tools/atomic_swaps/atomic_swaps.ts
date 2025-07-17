@@ -13,6 +13,8 @@ import {
   getNextSteps,
   formatErrorMessage,
 } from "./utils.js";
+import { schnorr } from "@noble/curves/secp256k1";
+import { bytesToHex } from "@noble/hashes/utils";
 
 /**
  * Atomic swaps tool for Lightning <-> Starknet
@@ -22,10 +24,11 @@ export class AtomicSwapsTool {
   private activeSwaps: Map<string, any> = new Map();
   private config: AtomicSwapConfig;
   private nwcClient: nwc.NWCClient;
+  private nwcConnectionString?: string;
 
   constructor(
     config: AtomicSwapConfig = createDefaultConfig(),
-    nwcClient: nwc.NWCClient
+    nwcClientOrConnectionString: nwc.NWCClient | string
   ) {
     console.log("AtomicSwapsTool constructor - config:", {
       starknetRpcUrl: config.starknetRpcUrl,
@@ -35,14 +38,91 @@ export class AtomicSwapsTool {
     });
     this.config = config;
     this.swapper = new AtomicSwapper(config);
-    this.nwcClient = nwcClient;
+    
+    if (typeof nwcClientOrConnectionString === 'string') {
+      this.nwcConnectionString = nwcClientOrConnectionString;
+      console.log("AtomicSwapsTool creating NWC client from connection string:", this.nwcConnectionString?.substring(0, 50) + "...");
+      
+      // Log the exact connection string and derived pubkey for debugging
+      try {
+        const url = new URL(this.nwcConnectionString);
+        const secret = url.searchParams.get('secret');
+        const relay = url.searchParams.get('relay');
+        const pubkeyFromUrl = url.pathname.replace('//', '');
+        
+        if (secret) {
+          try {
+            const secretBytes = new Uint8Array(Buffer.from(secret, 'hex'));
+            const pubkeyBytes = schnorr.getPublicKey(secretBytes);
+            const derivedPubkey = bytesToHex(pubkeyBytes);
+            console.log(`[AtomicSwapsTool] Connection analysis:`);
+            console.log(`  - Wallet pubkey from URL: ${pubkeyFromUrl}`);
+            console.log(`  - Derived app pubkey: ${derivedPubkey}`);
+            console.log(`  - Relay: ${relay}`);
+            console.log(`  - Secret: ${secret.substring(0, 8)}...`);
+          } catch (keyError) {
+            console.warn(`[AtomicSwapsTool] Failed to derive pubkey from secret:`, keyError);
+          }
+        }
+      } catch (parseError) {
+        console.warn(`[AtomicSwapsTool] Failed to parse connection string:`, parseError);
+      }
+      
+      this.nwcClient = new nwc.NWCClient({
+        nostrWalletConnectUrl: this.nwcConnectionString,
+      });
+    } else {
+      console.log("AtomicSwapsTool using passed NWC client");
+      this.nwcClient = nwcClientOrConnectionString;
+    }
   }
 
   /**
    * Initialize the atomic swaps tool
    */
   async initialize(): Promise<void> {
+    console.log("[AtomicSwapsTool] Initializing...");
     await this.swapper.initialize();
+    
+    // If we created our own NWC client, give it time to connect
+    if (this.nwcConnectionString) {
+      console.log("[AtomicSwapsTool] Waiting for NWC client to connect...");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced to 1 second
+      
+      // Test the connection with retries - but don't fail if it doesn't work
+      let connected = false;
+      const maxRetries = 2; // Reduced retries
+      
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const info = await this.nwcClient.getInfo();
+          console.log(`[AtomicSwapsTool] ✅ NWC client connected successfully after ${i + 1} attempts`);
+          console.log(`[AtomicSwapsTool] Wallet info - alias: ${info.alias}`);
+          connected = true;
+          break;
+        } catch (error) {
+          console.warn(`[AtomicSwapsTool] ❌ NWC connection test attempt ${i + 1}/${maxRetries} failed:`, (error as Error).message);
+          if (i < maxRetries - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500)); // Reduced wait time
+          }
+        }
+      }
+      
+      if (!connected) {
+        console.warn("[AtomicSwapsTool] ⚠️ NWC client connection failed after all retries - will try again during actual operations");
+      }
+    } else {
+      console.log("[AtomicSwapsTool] Using passed NWC client, testing connection...");
+      try {
+        const info = await this.nwcClient.getInfo();
+        console.log(`[AtomicSwapsTool] ✅ Passed NWC client working - alias: ${info.alias}`);
+      } catch (error) {
+        console.warn("[AtomicSwapsTool] ❌ Passed NWC client connection test failed:", (error as Error).message);
+        console.warn("[AtomicSwapsTool] Will try to use NWC client during actual operations");
+      }
+    }
+    
+    console.log("[AtomicSwapsTool] Initialization complete");
   }
 
   /**
@@ -663,7 +743,32 @@ export class AtomicSwapsTool {
     // If auto_pay is enabled, automatically pay the invoice
     if (params.auto_pay !== false) {
       try {
-        console.log("Auto-paying Lightning invoice...");
+        console.log("[AtomicSwapsTool] Auto-paying Lightning invoice...");
+
+        // Verify NWC client is still connected before payment
+        try {
+          const info = await this.nwcClient.getInfo();
+          console.log(`[AtomicSwapsTool] ✅ NWC client verified before payment - alias: ${info.alias}`);
+        } catch (error) {
+          console.error(`[AtomicSwapsTool] ❌ NWC client verification failed before payment:`, (error as Error).message);
+          return {
+            success: false,
+            message: `NWC client verification failed before payment: ${(error as Error).message}`,
+            data: {
+              swap_id: swapId,
+              state: formatSwapState(swap.getState()),
+              lightning_invoice: lightningInvoice,
+              starknet_address: params.starknet_address,
+              progress: calculateSwapProgress(swap.getState(), "lightning_to_starknet"),
+              status_description: getSwapStatusDescription(swap.getState(), "lightning_to_starknet"),
+              next_steps: [
+                "Pay the invoice manually using your wallet",
+                "Check your Lightning wallet balance",
+                "Verify NWC connection is still active"
+              ],
+            },
+          };
+        }
 
         // Pay the invoice using NWC client (same pattern as working pay_invoice tool)
         let processedResult: any;
@@ -1047,11 +1152,11 @@ export class AtomicSwapsTool {
  */
 export function registerAtomicSwapsTool(
   server: McpServer,
-  nwcClient: nwc.NWCClient
+  nwcClientOrConnectionString: nwc.NWCClient | string
 ): void {
   try {
     console.log("Registering atomic swaps tool...");
-    const tool = new AtomicSwapsTool(createDefaultConfig(), nwcClient);
+    const tool = new AtomicSwapsTool(createDefaultConfig(), nwcClientOrConnectionString);
     tool.registerTool(server);
     console.log("Atomic swaps tool registered successfully");
   } catch (error) {
