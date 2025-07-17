@@ -177,6 +177,33 @@ class AtomicSwapTester {
         console.log("  Example: yarn test-swap 0.00001000 starknet_to_lightning");
         console.log("");
     }
+
+    async cleanup() {
+        console.log("Closing NWC client...");
+        if (this.nwcClient) {
+            try {
+                this.nwcClient.close();
+                console.log("✅ NWC client closed");
+            } catch (error) {
+                console.warn("⚠️ Error closing NWC client:", error);
+            }
+        }
+
+        console.log("Cleaning up atomic swaps tool...");
+        if (this.atomicSwapsTool) {
+            try {
+                // The swapper might have cleanup methods
+                if (this.atomicSwapsTool.swapper && typeof this.atomicSwapsTool.swapper.cleanup === 'function') {
+                    await this.atomicSwapsTool.swapper.cleanup();
+                }
+                console.log("✅ Atomic swaps tool cleaned up");
+            } catch (error) {
+                console.warn("⚠️ Error cleaning up atomic swaps tool:", error);
+            }
+        }
+
+        console.log("✅ Cleanup completed");
+    }
 }
 
 async function main() {
@@ -235,6 +262,10 @@ async function main() {
         }
         console.log("=".repeat(20));
 
+        // Clean up resources
+        console.log("🧹 Cleaning up...");
+        await tester.cleanup();
+
     } catch (error) {
         console.error("");
         console.error("💥 Test script failed:");
@@ -244,6 +275,14 @@ async function main() {
             console.error("Stack trace:");
             console.error(error.stack);
         }
+        
+        // Clean up resources even on error
+        try {
+            await tester.cleanup();
+        } catch (cleanupError) {
+            console.warn("⚠️ Error during cleanup:", cleanupError);
+        }
+        
         process.exit(1);
     }
 }
