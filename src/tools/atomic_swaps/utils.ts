@@ -14,10 +14,21 @@ export function satoshisToHumanReadable(sats: bigint): string {
 
 /**
  * Convert human readable BTC to satoshis
+ * Supports both BTC format (0.00000342) and sats format (342)
  */
-export function humanReadableToSatoshis(btc: string): bigint {
-  const sats = Math.round(parseFloat(btc) * 100000000);
-  return BigInt(sats);
+export function humanReadableToSatoshis(amount: string): bigint {
+  const numAmount = parseFloat(amount);
+  
+  // If the amount is very small (< 0.01), treat it as BTC
+  // If the amount is >= 0.01, treat it as sats
+  if (numAmount < 0.01) {
+    // BTC format - convert to sats
+    const sats = Math.round(numAmount * 100000000);
+    return BigInt(sats);
+  } else {
+    // Sats format - use as is
+    return BigInt(Math.round(numAmount));
+  }
 }
 
 /**
